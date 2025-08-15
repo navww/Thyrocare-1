@@ -18,7 +18,7 @@ const SiteSettingsContext = createContext<SiteSettingsContextType | undefined>(u
 export const SiteSettingsProvider = ({ children }: { children: ReactNode }) => {
   const [siteSettings, setSiteSettings] = useState<SiteSettings>({
     websiteName: "Thyrocare",
-    logoUrl: "",
+    logoUrl: "/placeholder.svg",
     bannerUrl: "",
     favicon: ""
   });

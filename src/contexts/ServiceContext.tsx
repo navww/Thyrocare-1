@@ -47,11 +47,15 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
       try {
         const response = await fetchServices();
         const serviceList = response.data.services || response.data.data || response.data;
+        console.log('Fetched services data:', serviceList); // Log fetched data
 
         if (Array.isArray(serviceList)) {
           const servicesWithId = serviceList.map((service: ApiService) => ({
             ...service,
             id: service._id,
+            features: service.features || [],
+            requirements: service.requirements || [],
+            additionalImages: service.additionalImages || [],
           }));
           setServices(servicesWithId);
         } else {
@@ -74,11 +78,15 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await addServiceAPI(service);
       const serviceList = response.data.services;
+      console.log('Data returned after adding service:', serviceList); // Log data after adding
 
       if (Array.isArray(serviceList)) {
         const servicesWithId = serviceList.map((s: ApiService) => ({
           ...s,
           id: s._id,
+          features: s.features || [],
+          requirements: s.requirements || [],
+          additionalImages: s.additionalImages || [],
         }));
         setServices(servicesWithId);
       } else {
@@ -92,7 +100,24 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
   const updateService = async (id: string, updatedService: Partial<Service>) => {
     try {
       await updateServiceAPI(id, updatedService);
-      setServices(prev => prev.map(s => s.id === id ? { ...s, ...updatedService } : s));
+      // Re-fetch all services to ensure data consistency after update
+      const response = await fetchServices();
+      const serviceList = response.data.services || response.data.data || response.data;
+      console.log('Data returned after updating service (re-fetch):', serviceList); // Log data after updating
+
+      if (Array.isArray(serviceList)) {
+        const servicesWithId = serviceList.map((service: ApiService) => ({
+          ...service,
+          id: service._id,
+          features: service.features || [],
+          requirements: service.requirements || [],
+          additionalImages: service.additionalImages || [],
+        }));
+        setServices(servicesWithId);
+      } else {
+        console.error("Fetched services data is not an array after update:", response.data);
+        setServices([]);
+      }
     } catch (error) {
       console.error("Error updating service:", error);
     }

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import api from '@/api';
+import api, { getSlidersAPI, addSliderAPI, updateSliderAPI, deleteSliderAPI } from '@/api';
 
 export interface Slider {
   _id: string;
@@ -12,6 +12,7 @@ interface SliderContextType {
   sliders: Slider[];
   loading: boolean;
   error: string | null;
+  addSlider: (slider: Omit<Slider, '_id'>) => void; // Add addSlider to context type
   updateSlider: (id: string, updates: Partial<Slider>) => void;
   deleteSlider: (id: string) => void;
 }
@@ -20,6 +21,7 @@ export const SliderContext = createContext<SliderContextType>({
   sliders: [],
   loading: true,
   error: null,
+  addSlider: () => {}, // Add addSlider to default value
   updateSlider: () => {},
   deleteSlider: () => {},
 });
@@ -32,7 +34,7 @@ export const SliderProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchSliders = async () => {
       try {
-        const response = await api.get('/sliders/');
+        const response = await getSlidersAPI(); // Use getSlidersAPI
         setSliders(response.data);
       } catch (err) {
         setError('Failed to fetch sliders');
@@ -44,9 +46,18 @@ export const SliderProvider = ({ children }: { children: ReactNode }) => {
     fetchSliders();
   }, []);
 
+  const addSlider = async (slider: Omit<Slider, '_id'>) => {
+    try {
+      const response = await addSliderAPI(slider);
+      setSliders(prev => [...prev, response.data]); // Assuming API returns the new slider
+    } catch (err) {
+      setError('Failed to add slider');
+    }
+  };
+
   const updateSlider = async (id: string, updates: Partial<Slider>) => {
     try {
-      const response = await api.put(`/sliders/${id}`, updates);
+      const response = await updateSliderAPI(id, updates); // Use updateSliderAPI
       setSliders(prev =>
         prev.map(slider =>
           slider._id === id ? response.data : slider
@@ -59,7 +70,7 @@ export const SliderProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteSlider = async (id: string) => {
     try {
-      await api.delete(`/sliders/${id}`);
+      await deleteSliderAPI(id); // Use deleteSliderAPI
       setSliders(prev => prev.filter(slider => slider._id !== id));
     } catch (err) {
       setError('Failed to delete slider');
@@ -67,7 +78,7 @@ export const SliderProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <SliderContext.Provider value={{ sliders, loading, error, updateSlider, deleteSlider }}>
+    <SliderContext.Provider value={{ sliders, loading, error, addSlider, updateSlider, deleteSlider }}>
       {children}
     </SliderContext.Provider>
   );

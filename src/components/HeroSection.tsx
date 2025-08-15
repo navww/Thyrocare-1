@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Clock, Shield, Users, Stethoscope } from "lucide-react";
+import { Clock, Shield, Users, Stethoscope, Brain } from "lucide-react";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { BackgroundCarousel } from "@/components/BackgroundCarousel";
 import { useContent } from "@/contexts/ContentContext";
@@ -109,6 +109,7 @@ export const HeroSection = () => {
                     {index === 1 && <Shield className="w-8 h-8 text-white" />}
                     {index === 2 && <Users className="w-8 h-8 text-white" />}
                     {index === 3 && <Stethoscope className="w-8 h-8 text-white" />}
+                    {index === 4 && <Brain className="w-8 h-8 text-white" />}
                   </div>
                   <p className="text-base font-medium">{feature}</p>
                 </div>

@@ -5,6 +5,7 @@ import { useAdmin } from '@/contexts/AdminContext';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
 import { useMenu } from '@/contexts/MenuContext';
 import { useBackgroundImages } from '@/contexts/BackgroundContext';
+import { useSliders } from '@/contexts/SliderContext'; // Import useSliders
 import { useContent } from '@/contexts/ContentContext';
 import { useGlobalSettings } from '@/contexts/GlobalSettingsContext';
 import { Button } from '@/components/ui/button';
@@ -329,6 +330,7 @@ export const Admin = () => {
   const { siteSettings, updateSiteSettings } = useSiteSettings();
   const { menuItems, addMenuItem, updateMenuItem, deleteMenuItem } = useMenu();
   const { backgroundImages, addBackgroundImage, updateBackgroundImage, deleteBackgroundImage } = useBackgroundImages();
+  const { sliders, addSlider, updateSlider, deleteSlider } = useSliders(); // Use sliders context
   const { 
     bannerContent, aboutSection, testimonials, faqs, blogPosts,
     updateBannerContent, updateAboutSection, addTestimonial, updateTestimonial, deleteTestimonial,
@@ -356,6 +358,13 @@ export const Admin = () => {
     url: '',
     alt: '',
     order: backgroundImages.length + 1
+  });
+
+  // State for new slider image form
+  const [newSliderImage, setNewSliderImage] = useState({
+    imageUrl: '',
+    altText: '',
+    order: sliders.length + 1
   });
 
   // State for banner content form
@@ -529,6 +538,8 @@ export const Admin = () => {
       additionalImages: formData.additionalImages.filter(img => img.trim() !== '')
     };
 
+    console.log('Submitting service data:', serviceData); // Log data being sent
+
     if (editingService) {
       await updateService(editingService.id, serviceData);
       toast({
@@ -562,9 +573,9 @@ export const Admin = () => {
       imageAlt: service.imageAlt,
       image: service.image || '',
       detailedDescription: service.detailedDescription || '',
-      features: service.features?.length ? service.features : [''],
-      requirements: service.requirements?.length ? service.requirements : [''],
-      additionalImages: service.additionalImages?.length ? service.additionalImages : ['']
+      features: service.features || [],
+      requirements: service.requirements || [],
+      additionalImages: service.additionalImages || [],
     });
   };
 
@@ -636,6 +647,7 @@ export const Admin = () => {
               <TabsTrigger value="contact">Contact Info</TabsTrigger>
               <TabsTrigger value="menu">Menu</TabsTrigger>
               <TabsTrigger value="backgrounds">Backgrounds</TabsTrigger>
+              <TabsTrigger value="sliders">Sliders</TabsTrigger> {/* New tab for sliders */}
               <TabsTrigger value="content">Content</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
               <TabsTrigger value="global-settings">Global</TabsTrigger>
@@ -1034,53 +1046,54 @@ export const Admin = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        {/* ------------------------------ */}
-        <TabsContent value="backgrounds" className="space-y-6">
+
+        {/* Slider Images Tab */}
+        <TabsContent value="sliders" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Slider Images Management</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Add New Background Image */}
+              {/* Add New Slider Image */}
               <div className="border rounded-lg p-4 space-y-4">
                 <h3 className="font-semibold">Add New Slider Image</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="bg-url">Image URL</Label>
+                    <Label htmlFor="slider-url">Image URL</Label>
                     <Input
-                      id="bg-url"
+                      id="slider-url"
                       placeholder="https://example.com/image.jpg"
-                      value={newBackgroundImage.url}
-                      onChange={(e) => setNewBackgroundImage(prev => ({...prev, url: e.target.value}))}
+                      value={newSliderImage.imageUrl}
+                      onChange={(e) => setNewSliderImage(prev => ({...prev, imageUrl: e.target.value}))}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="bg-alt">Alt Text</Label>
+                    <Label htmlFor="slider-alt">Alt Text</Label>
                     <Input
-                      id="bg-alt"
+                      id="slider-alt"
                       placeholder="Image description"
-                      value={newBackgroundImage.alt}
-                      onChange={(e) => setNewBackgroundImage(prev => ({...prev, alt: e.target.value}))}
+                      value={newSliderImage.altText}
+                      onChange={(e) => setNewSliderImage(prev => ({...prev, altText: e.target.value}))}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="bg-order">Order</Label>
+                    <Label htmlFor="slider-order">Order</Label>
                     <Input
-                      id="bg-order"
+                      id="slider-order"
                       type="number"
                       placeholder="1"
-                      value={newBackgroundImage.order}
-                      onChange={(e) => setNewBackgroundImage(prev => ({...prev, order: parseInt(e.target.value) || 1}))}
+                      value={newSliderImage.order}
+                      onChange={(e) => setNewSliderImage(prev => ({...prev, order: parseInt(e.target.value) || 1}))}
                     />
                   </div>
                 </div>
                 <Button 
-                  onClick={() => {
-                    if (newBackgroundImage.url && newBackgroundImage.alt) {
-                      addBackgroundImage(newBackgroundImage);
-                      setNewBackgroundImage({ url: '', alt: '', order: backgroundImages.length + 1 });
+                  onClick={async () => {
+                    if (newSliderImage.imageUrl && newSliderImage.altText) {
+                      await addSlider(newSliderImage);
+                      setNewSliderImage({ imageUrl: '', altText: '', order: sliders.length + 1 });
                       toast({
-                        title: "Slider  image added",
+                        title: "Slider image added",
                         description: "Slider image has been added successfully."
                       });
                     } else {
@@ -1098,24 +1111,24 @@ export const Admin = () => {
                 </Button>
               </div>
 
-              {/* Existing  slider Background Images */}
+              {/* Existing Slider Images */}
               <div className="space-y-4">
                 <h3 className="font-semibold">Current Slider Images</h3>
-                {backgroundImages.map((image) => (
-                  <div key={image.id} className="border rounded-lg p-4 space-y-4">
+                {sliders.map((image) => (
+                  <div key={image._id} className="border rounded-lg p-4 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label>Image URL</Label>
                         <Input
-                          value={image.url}
-                          onChange={(e) => updateBackgroundImage(image.id, { url: e.target.value })}
+                          value={image.imageUrl}
+                          onChange={(e) => updateSlider(image._id, { imageUrl: e.target.value })}
                         />
                       </div>
                       <div>
                         <Label>Alt Text</Label>
                         <Input
-                          value={image.alt}
-                          onChange={(e) => updateBackgroundImage(image.id, { alt: e.target.value })}
+                          value={image.altText}
+                          onChange={(e) => updateSlider(image._id, { altText: e.target.value })}
                         />
                       </div>
                     </div>
@@ -1125,13 +1138,13 @@ export const Admin = () => {
                         <Input
                           type="number"
                           value={image.order}
-                          onChange={(e) => updateBackgroundImage(image.id, { order: parseInt(e.target.value) || 1 })}
+                          onChange={(e) => updateSlider(image._id, { order: parseInt(e.target.value) || 1 })}
                         />
                       </div>
                       <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
                         <img
-                          src={image.url}
-                          alt={image.alt}
+                          src={image.imageUrl}
+                          alt={image.altText}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -1140,7 +1153,7 @@ export const Admin = () => {
                       variant="destructive"
                       size="sm"
                       onClick={() => {
-                        deleteBackgroundImage(image.id);
+                        deleteSlider(image._id);
                         toast({
                           title: "Slider image deleted",
                           description: "Slider image has been deleted successfully."

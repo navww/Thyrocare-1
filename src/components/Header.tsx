@@ -8,6 +8,7 @@ import { useMenu } from "@/contexts/MenuContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useAuth } from "@/contexts/AuthContext";
+import ThyrocareLogo from "/main.jpg";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -42,13 +43,10 @@ export const Header = () => {
       {/* Main navigation */}
       <nav className="container mx-auto px-4">
         <div className="flex justify-between items-center min-h-[80px]">
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-medical-blue rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-lg">T</span>
-            </div>
-            <h1 className="text-xl md:text-2xl font-bold text-medical-blue flex items-center">
-              <span className="text-medical-red">T</span>hyrocare
-            </h1>
+          <div className="flex items-center">
+            <Link to="/">
+              <img src={ThyrocareLogo} alt={siteSettings.websiteName + " Logo"} width="100" height="auto" />
+            </Link>
           </div>
 
           {/* Desktop Menu and Auth Buttons */}
