@@ -33,8 +33,8 @@ interface ApiService extends Omit<Service, 'id'> {
 interface ServiceContextType {
   services: Service[];
   getService: (id: string) => Service | undefined;
-  addService: (service: Omit<Service, 'id'>) => void;
-  updateService: (id: string, service: Partial<Service>) => void;
+  addService: (service: Omit<Service, 'id'>, file?: File) => void;
+  updateService: (id: string, service: Partial<Service>, file?: File) => void;
   deleteService: (id: string) => void;
 }
 
@@ -75,9 +75,25 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
     return services.find(service => service.id === id);
   };
 
-  const addService = async (service: Omit<Service, 'id'>) => {
+  const addService = async (service: Omit<Service, 'id'>, file?: File) => {
     try {
-      const response = await addServiceAPI(service);
+      const formData = new FormData();
+      for (const key in service) {
+        if (Object.prototype.hasOwnProperty.call(service, key)) {
+          const value = (service as any)[key];
+          if (Array.isArray(value)) {
+            value.forEach((item, index) => {
+              formData.append(`${key}[${index}]`, item);
+            });
+          } else {
+            formData.append(key, value);
+          }
+        }
+      }
+      if (file) {
+        formData.append('packageFile', file);
+      }
+      const response = await addServiceAPI(formData);
       const serviceList = response.data.services;
       console.log('Data returned after adding service:', serviceList); // Log data after adding
 
@@ -98,9 +114,25 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateService = async (id: string, updatedService: Partial<Service>) => {
+  const updateService = async (id: string, updatedService: Partial<Service>, file?: File) => {
     try {
-      await updateServiceAPI(id, updatedService);
+      const formData = new FormData();
+      for (const key in updatedService) {
+        if (Object.prototype.hasOwnProperty.call(updatedService, key)) {
+          const value = (updatedService as any)[key];
+          if (Array.isArray(value)) {
+            value.forEach((item, index) => {
+              formData.append(`${key}[${index}]`, item);
+            });
+          } else {
+            formData.append(key, value);
+          }
+        }
+      }
+      if (file) {
+        formData.append('packageFile', file);
+      }
+      await updateServiceAPI(id, formData);
       // Re-fetch all services to ensure data consistency after update
       const response = await fetchServices();
       const serviceList = response.data.services || response.data.data || response.data;

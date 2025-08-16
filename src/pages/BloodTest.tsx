@@ -133,7 +133,7 @@ const BloodTest = () => {
                     {test.name}
                   </CardTitle>
                   <div className="flex items-center space-x-2">
-                    <span className="text-2xl font-bold text-green-600">${test.price}</span>
+                    <span className="text-2xl font-bold text-green-600">Rs.{test.price}</span>
                   </div>
                 </CardHeader>
 
@@ -241,7 +241,7 @@ const BloodTest = () => {
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xl font-bold text-green-600">${test.price}</span>
+                    <span className="text-xl font-bold text-green-600">Rs.{test.price}</span>
                   </div>
                 </CardHeader>
 

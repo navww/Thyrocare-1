@@ -18,8 +18,16 @@ api.interceptors.request.use(
 );
 
 export const getServices = () => api.get('/service');
-export const addServiceAPI = (serviceData: Omit<Service, 'id'>) => api.post('/service', serviceData);
-export const updateServiceAPI = (id: string, serviceData: Partial<Service>) => api.put(`/service/${id}`, serviceData);
+export const addServiceAPI = (serviceData: FormData) => api.post('/service', serviceData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
+export const updateServiceAPI = (id: string, serviceData: FormData) => api.put(`/service/${id}`, serviceData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
 export const deleteServiceAPI = (id: string) => api.delete(`/service/${id}`);
 
 // Slider API calls

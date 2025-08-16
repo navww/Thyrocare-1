@@ -36,6 +36,7 @@ interface ServiceFormData {
   requirements: string[];
   additionalImages: string[];
   packageFileUrl?: string;
+  packageFile?: File | null; // Add File type for packageFile
 }
 
 type ServiceFormProps = {
@@ -49,6 +50,7 @@ type ServiceFormProps = {
   setEditingService: (service: Service | null) => void;
   setIsAddDialogOpen: (isOpen: boolean) => void;
   resetForm: () => void;
+  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Pass file handler
 };
 
 const ServiceForm = ({
@@ -61,21 +63,9 @@ const ServiceForm = ({
   removeArrayField,
   setEditingService,
   setIsAddDialogOpen,
-  resetForm
+  resetForm,
+  handleFileChange // Destructure new prop
 }: ServiceFormProps) => {
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, packageFileUrl: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setFormData(prev => ({ ...prev, packageFileUrl: '' }));
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -232,7 +222,7 @@ const ServiceForm = ({
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => setFormData(prev => ({ ...prev, packageFileUrl: '' }))}
+              onClick={() => setFormData(prev => ({ ...prev, packageFileUrl: '', packageFile: null }))}
               className="ml-2 text-red-500"
             >
               <X className="w-4 h-4" /> Remove
@@ -464,7 +454,8 @@ export const Admin = () => {
     features: [''],
     requirements: [''],
     additionalImages: [],
-    packageFileUrl: ''
+    packageFileUrl: '',
+    packageFile: null,
   });
 
   const resetForm = () => {
@@ -483,8 +474,24 @@ export const Admin = () => {
       features: [''],
       requirements: [''],
       additionalImages: [],
-      packageFileUrl: ''
+      packageFileUrl: '',
+      packageFile: null,
     });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData(prev => ({ ...prev, packageFile: file }));
+      // Optionally, display a preview URL for the selected file
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, packageFileUrl: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData(prev => ({ ...prev, packageFile: null, packageFileUrl: '' }));
+    }
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -572,7 +579,7 @@ export const Admin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const serviceData: Partial<Service> = {
+    const serviceData: Omit<Service, 'id'> = {
       title: formData.title,
       description: formData.description,
       price: formData.price,
@@ -593,15 +600,14 @@ export const Admin = () => {
     console.log('Submitting service data:', serviceData); // Log data being sent
 
     if (editingService) {
-      await updateService(editingService.id, serviceData);
+      await updateService(editingService.id, serviceData, formData.packageFile || undefined);
       toast({
         title: "Service updated",
         description: "Service has been updated successfully."
       });
       setEditingService(null);
     } else {
-      // Cast serviceData to Omit<Service, 'id'> as all required fields are present in ServiceFormData
-      await addService(serviceData as Omit<Service, 'id'>);
+      await addService(serviceData, formData.packageFile || undefined);
       toast({
         title: "Service added",
         description: "New service has been added successfully."
@@ -630,6 +636,7 @@ export const Admin = () => {
       requirements: service.requirements || [],
       additionalImages: service.additionalImages || [],
       packageFileUrl: service.packageFileUrl || '',
+      packageFile: null, // Reset file input when editing
     });
   };
 
@@ -734,6 +741,7 @@ export const Admin = () => {
                   setEditingService={setEditingService}
                   setIsAddDialogOpen={setIsAddDialogOpen}
                   resetForm={resetForm}
+                  handleFileChange={handleFileChange}
                 />
               </DialogContent>
             </Dialog>
@@ -1940,6 +1948,7 @@ export const Admin = () => {
               setEditingService={setEditingService}
               setIsAddDialogOpen={setIsAddDialogOpen}
               resetForm={resetForm}
+              handleFileChange={handleFileChange}
             />
           </DialogContent>
         </Dialog>
