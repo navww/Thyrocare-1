@@ -22,6 +22,7 @@ export interface Service {
   additionalImages?: string[];
   features?: string[];
   requirements?: string[];
+  packageFileUrl?: string;
 }
 
 // Type for the service object coming from the API

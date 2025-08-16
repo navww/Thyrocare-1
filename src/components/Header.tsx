@@ -44,7 +44,7 @@ export const Header = () => {
         <div className="flex justify-between items-center min-h-[80px]">
           <div className="flex items-center">
             <Link to="/">
-              <img src="/main.jpg" alt={siteSettings.websiteName + " Logo"} width="100" height="auto" />
+              <img src="https://www.hostimage.fun/uploads/1755348689_22454.jpg" alt={siteSettings.websiteName + " Logo"} width="100" height="auto" />
             </Link>
           </div>
 

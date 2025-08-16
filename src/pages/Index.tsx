@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { HeroSection } from "@/components/HeroSection";
 import { ServicesSection } from "@/components/ServicesSection";
+import { WhyChooseUsSection } from "@/components/WhyChooseUsSection";
+import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { ContactSection } from "@/components/ContactSection";
 
 const images = [
@@ -47,6 +49,8 @@ const Index = () => {
       </section>
       {/* Custom Auto-Play Image Slider End */}
       <ServicesSection />
+      <WhyChooseUsSection />
+      <HowItWorksSection />
       <ContactSection />
     </div>
   );

@@ -125,7 +125,7 @@ export const ServiceDetails = () => {
                   <img
                     src={service.image}
                     alt={service.imageAlt}
-                    className="w-full h-64 lg:h-80 object-cover rounded-lg"
+                    className="w-full h-64 lg:h-80 object-contain rounded-lg"
                   />
                 </CardContent>
               </Card>
@@ -175,12 +175,13 @@ export const ServiceDetails = () => {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {service.additionalImages.map((image, index) => (
-                      <img
-                        key={index}
-                        src={image}
-                        alt={`${service.title} - Image ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg"
-                      />
+                      <div key={index} className="aspect-[4/3] overflow-hidden rounded-lg">
+                        <img
+                          src={image}
+                          alt={`${service.title} - Image ${index + 1}`}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
                     ))}
                   </div>
                 </CardContent>

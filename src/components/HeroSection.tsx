@@ -44,7 +44,7 @@ export const HeroSection = () => {
   };
   
   return (
-    <section className="relative pt-8 pb-12 md:pt-4 md:pb-8 min-h-[600px] overflow-hidden">
+    <section className="relative pt-8 pb-0 md:pt-4 md:pb-8 min-h-[auto] md:min-h-[600px] overflow-hidden">
       <BackgroundCarousel images={sliders} />
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -101,7 +101,7 @@ export const HeroSection = () => {
             </div>
 
             {/* Features */}
-            <div className="grid grid-cols-2 gap-6 pt-8">
+            <div className="hidden sm:grid grid-cols-2 gap-6 sm:pt-8 pt-0">
               {aboutSection.features.map((feature, index) => (
                 <div key={index} className="text-center">
                   <div className="w-16 h-16 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-3">

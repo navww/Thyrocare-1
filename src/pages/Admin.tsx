@@ -35,6 +35,7 @@ interface ServiceFormData {
   features: string[];
   requirements: string[];
   additionalImages: string[];
+  packageFileUrl?: string;
 }
 
 type ServiceFormProps = {
@@ -62,6 +63,19 @@ const ServiceForm = ({
   setIsAddDialogOpen,
   resetForm
 }: ServiceFormProps) => {
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, packageFileUrl: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData(prev => ({ ...prev, packageFileUrl: '' }));
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -200,6 +214,31 @@ const ServiceForm = ({
           onChange={handleChange}
           required
         />
+      </div>
+
+      {/* Package File Upload Section */}
+      <div>
+        <Label htmlFor="packageFile">Upload Package File (PDF, DOCX, etc.)</Label>
+        <Input
+          id="packageFile"
+          type="file"
+          accept=".pdf,.doc,.docx"
+          onChange={handleFileChange}
+        />
+        {formData.packageFileUrl && (
+          <p className="text-sm text-gray-500 mt-2">
+            File selected: <a href={formData.packageFileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">View File</a>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setFormData(prev => ({ ...prev, packageFileUrl: '' }))}
+              className="ml-2 text-red-500"
+            >
+              <X className="w-4 h-4" /> Remove
+            </Button>
+          </p>
+        )}
       </div>
 
       {/* Features Section */}
@@ -424,7 +463,8 @@ export const Admin = () => {
     detailedDescription: '',
     features: [''],
     requirements: [''],
-    additionalImages: ['']
+    additionalImages: [],
+    packageFileUrl: ''
   });
 
   const resetForm = () => {
@@ -442,7 +482,8 @@ export const Admin = () => {
       detailedDescription: '',
       features: [''],
       requirements: [''],
-      additionalImages: ['']
+      additionalImages: [],
+      packageFileUrl: ''
     });
   };
 
@@ -531,11 +572,22 @@ export const Admin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const serviceData = {
-      ...formData,
+    const serviceData: Partial<Service> = {
+      title: formData.title,
+      description: formData.description,
+      price: formData.price,
+      duration: formData.duration,
+      rating: formData.rating,
+      patients: formData.patients,
+      isPopular: formData.isPopular,
+      category: formData.category,
+      imageAlt: formData.imageAlt,
+      image: formData.image,
+      detailedDescription: formData.detailedDescription,
       features: formData.features.filter(f => f.trim() !== ''),
       requirements: formData.requirements.filter(r => r.trim() !== ''),
-      additionalImages: formData.additionalImages.filter(img => img.trim() !== '')
+      additionalImages: formData.additionalImages.filter(img => img.trim() !== ''),
+      packageFileUrl: formData.packageFileUrl || undefined,
     };
 
     console.log('Submitting service data:', serviceData); // Log data being sent
@@ -548,7 +600,8 @@ export const Admin = () => {
       });
       setEditingService(null);
     } else {
-      await addService(serviceData);
+      // Cast serviceData to Omit<Service, 'id'> as all required fields are present in ServiceFormData
+      await addService(serviceData as Omit<Service, 'id'>);
       toast({
         title: "Service added",
         description: "New service has been added successfully."
@@ -576,6 +629,7 @@ export const Admin = () => {
       features: service.features || [],
       requirements: service.requirements || [],
       additionalImages: service.additionalImages || [],
+      packageFileUrl: service.packageFileUrl || '',
     });
   };
 

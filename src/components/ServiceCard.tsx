@@ -78,7 +78,7 @@ export const ServiceCard = ({
         {/* Image */}
         <div className="aspect-[4/3] bg-gradient-to-br from-medical-blue-light to-white rounded-lg mb-4 flex items-center justify-center overflow-hidden">
           {image ? (
-            <img src={image} alt={imageAlt} className="w-full h-full object-cover" />
+            <img src={image} alt={imageAlt} className="w-full h-full object-contain" />
           ) : (
             <div className="text-center p-4">
               <div className="w-16 h-16 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-2">
