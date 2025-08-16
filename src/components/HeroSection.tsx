@@ -125,7 +125,7 @@ export const HeroSection = () => {
                   <div className="w-20 h-20 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-4">
                     <Stethoscope className="w-10 h-10 text-white" />
                   </div>
-                  <img src="/public/main.jpg" alt="Doctor" className="rounded-lg" />
+                  <img src="/main.jpg" alt="Doctor" className="rounded-lg" />
                 </div>
               </div>
               

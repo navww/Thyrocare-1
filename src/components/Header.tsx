@@ -8,7 +8,6 @@ import { useMenu } from "@/contexts/MenuContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useAuth } from "@/contexts/AuthContext";
-import ThyrocareLogo from "/main.jpg";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -45,7 +44,7 @@ export const Header = () => {
         <div className="flex justify-between items-center min-h-[80px]">
           <div className="flex items-center">
             <Link to="/">
-              <img src={ThyrocareLogo} alt={siteSettings.websiteName + " Logo"} width="100" height="auto" />
+              <img src="/main.jpg" alt={siteSettings.websiteName + " Logo"} width="100" height="auto" />
             </Link>
           </div>
 

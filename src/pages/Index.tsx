@@ -4,9 +4,9 @@ import { ServicesSection } from "@/components/ServicesSection";
 import { ContactSection } from "@/components/ContactSection";
 
 const images = [
-  "/public/step1.webp",
-  "/public/step2.webp",
-  "/public/step3.webp",
+  "/step1.webp",
+  "/step2.webp",
+  "/step3.webp",
 ];
 
 const Index = () => {
