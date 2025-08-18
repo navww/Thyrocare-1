@@ -2,6 +2,9 @@ import axios from 'axios';
 import { Service } from './contexts/ServiceContext';
 const api = axios.create({
   baseURL: 'https://thybackend.onrender.com/api',
+  headers: {
+    'Accept': 'application/json,application/pdf,text/plain, */*',
+  },
 });
 
 api.interceptors.request.use(
@@ -10,6 +13,8 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+
     return config;
   },
   (error) => {
@@ -18,16 +23,8 @@ api.interceptors.request.use(
 );
 
 export const getServices = () => api.get('/service');
-export const addServiceAPI = (serviceData: FormData) => api.post('/service', serviceData, {
-  headers: {
-    'Content-Type': 'multipart/form-data',
-  },
-});
-export const updateServiceAPI = (id: string, serviceData: FormData) => api.put(`/service/${id}`, serviceData, {
-  headers: {
-    'Content-Type': 'multipart/form-data',
-  },
-});
+export const addServiceAPI = (serviceData: FormData) => api.post('/service', serviceData);
+export const updateServiceAPI = (id: string, serviceData: FormData) => api.put(`/service/${id}`, serviceData);
 export const deleteServiceAPI = (id: string) => api.delete(`/service/${id}`);
 
 // Slider API calls

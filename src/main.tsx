@@ -1,19 +1,16 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { BackgroundProvider } from './contexts/BackgroundContext.tsx';
-import { BlogProvider } from './contexts/BlogContext.tsx';
-import { BloodTestProvider } from './contexts/BloodTestContext.tsx';
-import { SliderProvider } from './contexts/SliderContext.tsx';
+import { BackgroundProvider } from './contexts/BackgroundContext.tsx'
+import { AuthProvider } from './contexts/AuthContext.tsx'
+import { BloodTestProvider } from './contexts/BloodTestContext.tsx'
 
 createRoot(document.getElementById("root")!).render(
-  <BackgroundProvider>
-    <BlogProvider>
+  <AuthProvider>
+    <BackgroundProvider>
       <BloodTestProvider>
-        <SliderProvider>
-          <App />
-        </SliderProvider>
+        <App />
       </BloodTestProvider>
-    </BlogProvider>
-  </BackgroundProvider>
+    </BackgroundProvider>
+  </AuthProvider>
 );

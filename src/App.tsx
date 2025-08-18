@@ -9,6 +9,9 @@ import { ContactProvider } from "@/contexts/ContactContext";
 import { SiteSettingsProvider, useSiteSettings } from "@/contexts/SiteSettingsContext"; // Import useSiteSettings
 import { MenuProvider } from "@/contexts/MenuContext";
 import { BackgroundProvider } from "@/contexts/BackgroundContext";
+import { BlogProvider } from "./contexts/BlogContext.tsx";
+import { BloodTestProvider } from "./contexts/BloodTestContext.tsx";
+import { SliderProvider } from "./contexts/SliderContext.tsx";
 import { ContentProvider } from "@/contexts/ContentContext";
 import { GlobalSettingsProvider } from "@/contexts/GlobalSettingsContext";
 import { AdminProvider } from "@/contexts/AdminContext";
@@ -18,6 +21,7 @@ import { Footer } from "@/components/Footer";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Offers from "./pages/Offers";
+import BulkBookingDiscount from "./pages/BulkBookingDiscount";
 // ThyrocarePackage route removed
 import BloodTest from "./pages/BloodTest";
 import Blog from "./pages/Blog";
@@ -115,6 +119,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/offers" element={<Offers />} />
+          <Route path="/bulk-booking-discount" element={<BulkBookingDiscount />} />
           {/* ThyrocarePackage route removed */}
           <Route path="/blood-test" element={<BloodTest />} />
           <Route path="/blog" element={<Blog />} />
@@ -140,24 +145,30 @@ const App = () => (
           <AuthProvider>
             <GlobalSettingsProvider>
               <ServiceProvider>
-              <ContactProvider>
-                <SiteSettingsProvider>
-                  <MenuProvider>
-                    <BackgroundProvider>
-                      <ContentProvider>
-                        <AdminProvider>
-                          <Toaster />
-                          <Sonner />
-                          <AppContent /> {/* Render AppContent here */}
-                        </AdminProvider>
-                      </ContentProvider>
-                    </BackgroundProvider>
-                  </MenuProvider>
-                </SiteSettingsProvider>
-              </ContactProvider>
-            </ServiceProvider>
-          </GlobalSettingsProvider>
-        </AuthProvider>
+                <ContactProvider>
+                  <SiteSettingsProvider>
+                    <MenuProvider>
+                      <BackgroundProvider>
+                        <ContentProvider>
+                          <AdminProvider>
+                            <BlogProvider>
+                              <BloodTestProvider>
+                                <SliderProvider>
+                                  <Toaster />
+                                  <Sonner />
+                                  <AppContent /> {/* Render AppContent here */}
+                                </SliderProvider>
+                              </BloodTestProvider>
+                            </BlogProvider>
+                          </AdminProvider>
+                        </ContentProvider>
+                      </BackgroundProvider>
+                    </MenuProvider>
+                  </SiteSettingsProvider>
+                </ContactProvider>
+              </ServiceProvider>
+            </GlobalSettingsProvider>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>

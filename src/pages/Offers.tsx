@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,8 @@ const Offers = () => {
   const [form, setForm] = useState({ name: '', email: '', address: '', phone: '', description: '', files: [] as File[] });
   const [submitted, setSubmitted] = useState(false);
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [referralForm, setReferralForm] = useState({ referrerEmail: '', referrerPhone: '', friendEmail: '', friendPhone: '' });
+  const [referralSubmitted, setReferralSubmitted] = useState(false);
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -63,6 +66,21 @@ const Offers = () => {
     });
     setForm({ name: '', email: '', address: '', phone: '', description: '', files: [] });
     setSubmitted(true);
+  };
+
+  const handleReferralChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReferralForm({ ...referralForm, [e.target.name]: e.target.value });
+  };
+
+  const handleReferralSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.post('/referrals', referralForm);
+      setReferralSubmitted(true);
+      setReferralForm({ referrerEmail: '', referrerPhone: '', friendEmail: '', friendPhone: '' });
+    } catch (error) {
+      console.error('Error submitting referral:', error);
+    }
   };
 
   return (
@@ -237,14 +255,72 @@ const Offers = () => {
               <Percent className="w-12 h-12 text-medical-blue mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">Bulk Booking Discount</h3>
               <p className="text-gray-600 mb-4">Book for 3+ family members and get additional 15% off</p>
-              <Button variant="medical-outline">Learn More</Button>
+              <Link to="/bulk-booking-discount">
+                <Button variant="medical-outline">Learn More</Button>
+              </Link>
             </Card>
 
             <Card className="text-center p-6">
               <Users className="w-12 h-12 text-medical-blue mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">Refer & Earn</h3>
-              <p className="text-gray-600 mb-4">Refer friends and earn up to $50 credit for each referral</p>
-              <Button variant="medical-outline">Refer Now</Button>
+              <p className="text-gray-600 mb-4">Refer friends and earn up to Rs.50 credit for each referral</p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="medical-outline">Refer Now</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Refer a Friend</DialogTitle>
+                    <DialogDescription>
+                      Fill in your details and your friend's details to send a referral.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {referralSubmitted ? (
+                    <div className="text-green-600 font-medium text-center py-4">Thank you for referring a friend!</div>
+                  ) : (
+                    <form onSubmit={handleReferralSubmit} className="space-y-4">
+                      <Input
+                        name="referrerEmail"
+                        type="email"
+                        placeholder="Your Email"
+                        value={referralForm.referrerEmail}
+                        onChange={handleReferralChange}
+                        required
+                      />
+                      <Input
+                        name="referrerPhone"
+                        type="tel"
+                        placeholder="Your Phone"
+                        value={referralForm.referrerPhone}
+                        onChange={handleReferralChange}
+                        required
+                      />
+                      <Input
+                        name="friendEmail"
+                        type="email"
+                        placeholder="Friend's Email"
+                        value={referralForm.friendEmail}
+                        onChange={handleReferralChange}
+                        required
+                      />
+                      <Input
+                        name="friendPhone"
+                        type="tel"
+                        placeholder="Friend's Phone"
+                        value={referralForm.friendPhone}
+                        onChange={handleReferralChange}
+                        required
+                      />
+                      <DialogFooter>
+                        <Button type="submit" variant="medical" className="w-full">Submit Referral</Button>
+                        <DialogClose asChild>
+                          <Button type="button" variant="outline" className="w-full">Cancel</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </form>
+                  )}
+                </DialogContent>
+              </Dialog>
             </Card>
 
             <Card className="text-center p-6">

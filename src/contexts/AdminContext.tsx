@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import api from '@/api';
+import { useAuth } from './AuthContext';
 
 interface AdminContextType {
   isLoggedIn: boolean;
@@ -10,21 +11,14 @@ interface AdminContextType {
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsLoggedIn(true);
-    }
-  }, []);
+  const auth = useAuth();
 
   const login = async (email: string, password: string) => {
     try {
       const response = await api.post('/user/login', { email, password });
       if (response.data && response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        setIsLoggedIn(true);
+        const { user, token } = response.data;
+        auth.login(user, token);
         return true;
       }
       return false;
@@ -35,13 +29,12 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
+    auth.logout();
   };
 
   return (
     <AdminContext.Provider value={{
-      isLoggedIn,
+      isLoggedIn: auth.isAuthenticated,
       login,
       logout
     }}>

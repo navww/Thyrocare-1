@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Slider } from '@/contexts/SliderContext';
+import { BackgroundImage } from '@/contexts/BackgroundContext';
 
 interface BackgroundCarouselProps {
-  images: Slider[];
+  images: BackgroundImage[];
 }
 
 export const BackgroundCarousel = ({ images }: BackgroundCarouselProps) => {
@@ -28,14 +28,14 @@ export const BackgroundCarousel = ({ images }: BackgroundCarouselProps) => {
     <div className="absolute inset-0 overflow-hidden">
       {images.map((image, index) => (
         <div
-          key={image._id}
+          key={image.id}
           className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentIndex ? 'opacity-100' : 'opacity-0'
           }`}
         >
           <img
-            src={image.imageUrl}
-            alt={image.altText}
+            src={image.url}
+            alt={image.alt}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-white/80" />

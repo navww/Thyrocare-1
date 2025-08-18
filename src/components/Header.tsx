@@ -18,7 +18,7 @@ export const Header = () => {
   const { isAuthenticated, logout } = useAuth();
 
   return (
-    <header className="bg-background border-b shadow-md">
+    <header className="bg-background border-b shadow-md relative z-10">
       {/* Top contact bar */}
       <div className="bg-medical-blue text-white py-1">
         <div className="container mx-auto px-4 flex justify-between items-center text-sm">

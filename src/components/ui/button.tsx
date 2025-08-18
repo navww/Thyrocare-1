@@ -20,7 +20,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         medical: "bg-medical-blue text-white hover:bg-primary-hover shadow-lg",
         "medical-red": "bg-medical-red text-white hover:bg-accent-red-hover shadow-lg",
-        "medical-outline": "border-2 border-medical-blue text-medical-blue bg-white hover:bg-medical-blue hover:text-white",
+        "medical-outline": "border-2 border-medical-blue text-medical-blue bg-white hover:bg-medical-blue/10",
       },
       size: {
         default: "h-10 px-4 py-2",

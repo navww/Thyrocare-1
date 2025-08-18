@@ -1,31 +1,36 @@
-import { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import api from '@/api';
 
-interface BloodTest {
+export interface BloodTest {
   _id: string;
   name: string;
-  price: number;
+  price: string;
+  originalPrice: string;
   description: string;
+  sampleType: string;
+  fasting: string;
+  reportTime: string;
   category: string;
-  tags: string[];
-  imageUrl: string;
 }
 
 interface BloodTestContextType {
   bloodTests: BloodTest[];
   loading: boolean;
   error: string | null;
+  addBloodTest: (data: Omit<BloodTest, '_id'>) => Promise<void>;
   updateBloodTest: (id: string, data: Partial<BloodTest>) => Promise<void>;
   deleteBloodTest: (id: string) => Promise<void>;
 }
 
-export const BloodTestContext = createContext<BloodTestContextType>({
-  bloodTests: [],
-  loading: true,
-  error: null,
-  updateBloodTest: async () => {},
-  deleteBloodTest: async () => {},
-});
+export const BloodTestContext = createContext<BloodTestContextType | undefined>(undefined);
+
+export const useBloodTests = () => {
+  const context = useContext(BloodTestContext);
+  if (!context) {
+    throw new Error('useBloodTests must be used within a BloodTestProvider');
+  }
+  return context;
+};
 
 export const BloodTestProvider = ({ children }: { children: ReactNode }) => {
   const [bloodTests, setBloodTests] = useState<BloodTest[]>([]);
@@ -65,8 +70,17 @@ export const BloodTestProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const addBloodTest = async (data: Omit<BloodTest, '_id'>) => {
+    try {
+      const response = await api.post('/blood-tests', data);
+      setBloodTests([...bloodTests, response.data]);
+    } catch (err) {
+      setError('Failed to add blood test');
+    }
+  };
+
   return (
-    <BloodTestContext.Provider value={{ bloodTests, loading, error, updateBloodTest, deleteBloodTest }}>
+    <BloodTestContext.Provider value={{ bloodTests, loading, error, addBloodTest, updateBloodTest, deleteBloodTest }}>
       {children}
     </BloodTestContext.Provider>
   );

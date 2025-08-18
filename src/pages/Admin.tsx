@@ -5,9 +5,10 @@ import { useAdmin } from '@/contexts/AdminContext';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
 import { useMenu } from '@/contexts/MenuContext';
 import { useBackgroundImages } from '@/contexts/BackgroundContext';
-import { useSliders } from '@/contexts/SliderContext'; // Import useSliders
+import { useSliders } from '@/contexts/SliderContext';
 import { useContent } from '@/contexts/ContentContext';
 import { useGlobalSettings } from '@/contexts/GlobalSettingsContext';
+import { useBloodTests, BloodTest } from '@/contexts/BloodTestContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Edit, Trash2, Upload, X, LogOut, Settings, Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import api from '@/api';
 
 interface ServiceFormData {
   title: string;
@@ -35,8 +37,18 @@ interface ServiceFormData {
   features: string[];
   requirements: string[];
   additionalImages: string[];
-  packageFileUrl?: string;
-  packageFile?: File | null; // Add File type for packageFile
+  file?: File | null;
+}
+
+interface Referral {
+  _id: string;
+  referrerEmail: string;
+  referrerPhone: string;
+  friendEmail: string;
+  friendPhone: string;
+  status: string;
+  referralCode: string;
+  createdAt: string;
 }
 
 type ServiceFormProps = {
@@ -50,7 +62,106 @@ type ServiceFormProps = {
   setEditingService: (service: Service | null) => void;
   setIsAddDialogOpen: (isOpen: boolean) => void;
   resetForm: () => void;
-  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Pass file handler
+  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+interface BloodTestFormData {
+  name: string;
+  price: string;
+  originalPrice: string;
+  description: string;
+  sampleType: string;
+  fasting: string;
+  reportTime: string;
+  category: string;
+}
+
+type BloodTestFormProps = {
+  formData: BloodTestFormData;
+  setFormData: React.Dispatch<React.SetStateAction<BloodTestFormData>>;
+  handleSubmit: (e: React.FormEvent) => void;
+  editingBloodTest: BloodTest | null;
+  setEditingBloodTest: (bloodTest: BloodTest | null) => void;
+  setIsAddBloodTestDialogOpen: (isOpen: boolean) => void;
+  resetForm: () => void;
+};
+
+const BloodTestForm = ({
+  formData,
+  setFormData,
+  handleSubmit,
+  editingBloodTest,
+  setEditingBloodTest,
+  setIsAddBloodTestDialogOpen,
+  resetForm,
+}: BloodTestFormProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="name">Test Name</Label>
+          <Input id="name" value={formData.name} onChange={handleChange} required />
+        </div>
+        <div>
+          <Label htmlFor="category">Category</Label>
+          <Input id="category" value={formData.category} onChange={handleChange} required />
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <Textarea id="description" value={formData.description} onChange={handleChange} required />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <Label htmlFor="price">Price</Label>
+          <Input id="price" value={formData.price} onChange={handleChange} placeholder="299" required />
+        </div>
+        <div>
+          <Label htmlFor="originalPrice">Original Price</Label>
+          <Input id="originalPrice" value={formData.originalPrice} onChange={handleChange} placeholder="499" required />
+        </div>
+        <div>
+          <Label htmlFor="sampleType">Sample Type</Label>
+          <Input id="sampleType" value={formData.sampleType} onChange={handleChange} placeholder="Blood" required />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="fasting">Fasting</Label>
+          <Input id="fasting" value={formData.fasting} onChange={handleChange} placeholder="Not Required" required />
+        </div>
+        <div>
+          <Label htmlFor="reportTime">Report Time</Label>
+          <Input id="reportTime" value={formData.reportTime} onChange={handleChange} placeholder="24 hours" required />
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            setEditingBloodTest(null);
+            setIsAddBloodTestDialogOpen(false);
+            resetForm();
+          }}
+        >
+          Cancel
+        </Button>
+        <Button type="submit">
+          {editingBloodTest ? 'Update Blood Test' : 'Add Blood Test'}
+        </Button>
+      </div>
+    </form>
+  );
 };
 
 const ServiceForm = ({
@@ -206,30 +317,30 @@ const ServiceForm = ({
         />
       </div>
 
-      {/* Package File Upload Section */}
+      {/* File Upload Section
       <div>
-        <Label htmlFor="packageFile">Upload Package File (PDF, DOCX, etc.)</Label>
+        <Label htmlFor="file">Upload File (PDF, DOCX, etc.)</Label>
         <Input
-          id="packageFile"
+          id="file"
           type="file"
           accept=".pdf,.doc,.docx"
           onChange={handleFileChange}
         />
-        {formData.packageFileUrl && (
+        {formData.file && (
           <p className="text-sm text-gray-500 mt-2">
-            File selected: <a href={formData.packageFileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">View File</a>
+            File selected: {formData.file.name}
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => setFormData(prev => ({ ...prev, packageFileUrl: '', packageFile: null }))}
+              onClick={() => setFormData(prev => ({ ...prev, file: null }))}
               className="ml-2 text-red-500"
             >
               <X className="w-4 h-4" /> Remove
             </Button>
           </p>
         )}
-      </div>
+      </div> */}
 
       {/* Features Section */}
       <div>
@@ -359,7 +470,8 @@ export const Admin = () => {
   const { siteSettings, updateSiteSettings } = useSiteSettings();
   const { menuItems, addMenuItem, updateMenuItem, deleteMenuItem } = useMenu();
   const { backgroundImages, addBackgroundImage, updateBackgroundImage, deleteBackgroundImage } = useBackgroundImages();
-  const { sliders, addSlider, updateSlider, deleteSlider } = useSliders(); // Use sliders context
+  const { sliders, addSlider, updateSlider, deleteSlider } = useSliders();
+  const { bloodTests, addBloodTest, updateBloodTest, deleteBloodTest } = useBloodTests();
   const { 
     bannerContent, aboutSection, testimonials, faqs, blogPosts,
     updateBannerContent, updateAboutSection, addTestimonial, updateTestimonial, deleteTestimonial,
@@ -368,12 +480,41 @@ export const Admin = () => {
   } = useContent();
   const { settings, updateSettings, currencies, languages } = useGlobalSettings();
   const { isLoggedIn, login, logout } = useAdmin();
+  const [referrals, setReferrals] = useState<Referral[]>([]);
   const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
-  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [isAddBloodTestDialogOpen, setIsAddBloodTestDialogOpen] = useState(false);
+  const [editingBloodTest, setEditingBloodTest] = useState<BloodTest | null>(null);
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [contactForm, setContactForm] = useState(contactInfo);
   const [siteForm, setSiteForm] = useState(siteSettings);
+
+  useEffect(() => {
+    const fetchReferrals = async () => {
+      try {
+        const response = await api.get('/referrals');
+        setReferrals(response.data);
+      } catch (error) {
+        console.error('Error fetching referrals:', error);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchReferrals();
+    }
+  }, [isLoggedIn]);
+
+  const [bloodTestFormData, setBloodTestFormData] = useState<BloodTestFormData>({
+    name: '',
+    price: '',
+    originalPrice: '',
+    description: '',
+    sampleType: '',
+    fasting: '',
+    reportTime: '',
+    category: '',
+  });
 
   // State for new menu item form
   const [newMenuItem, setNewMenuItem] = useState({
@@ -438,6 +579,23 @@ export const Admin = () => {
     setSiteForm(siteSettings);
   }, [siteSettings]);
   
+  const handleUpdateReferralStatus = async (id: string, status: string) => {
+    try {
+      await api.put(`/referrals/${id}/status`, { status });
+      setReferrals(referrals.map(r => r._id === id ? { ...r, status } : r));
+      toast({
+        title: "Referral status updated",
+        description: "Referral status has been updated successfully."
+      });
+    } catch (error) {
+      console.error('Error updating referral status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update referral status.",
+        variant: "destructive"
+      });
+    }
+  };
   
   const [formData, setFormData] = useState<ServiceFormData>({
     title: '',
@@ -454,8 +612,7 @@ export const Admin = () => {
     features: [''],
     requirements: [''],
     additionalImages: [],
-    packageFileUrl: '',
-    packageFile: null,
+    file: null,
   });
 
   const resetForm = () => {
@@ -474,31 +631,35 @@ export const Admin = () => {
       features: [''],
       requirements: [''],
       additionalImages: [],
-      packageFileUrl: '',
-      packageFile: null,
+      file: null,
+    });
+  };
+
+  const resetBloodTestForm = () => {
+    setBloodTestFormData({
+      name: '',
+      price: '',
+      originalPrice: '',
+      description: '',
+      sampleType: '',
+      fasting: '',
+      reportTime: '',
+      category: '',
     });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData(prev => ({ ...prev, packageFile: file }));
-      // Optionally, display a preview URL for the selected file
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, packageFileUrl: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
+      setFormData(prev => ({ ...prev, file: file }));
     } else {
-      setFormData(prev => ({ ...prev, packageFile: null, packageFileUrl: '' }));
+      setFormData(prev => ({ ...prev, file: null }));
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-      console.log('Login attempt:', loginForm.username, loginForm.password);
-    const success = login(loginForm.username, loginForm.password);
-      console.log('Login success:', success);
+    const success = await login(loginForm.email, loginForm.password);
     if (success) {
       toast({
         title: "Login successful",
@@ -534,22 +695,20 @@ export const Admin = () => {
   // If not logged in, show login form
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-center">Admin Login</CardTitle>
-              <p className="text-sm text-gray-600 text-center">
-                Current login state: {isLoggedIn ? 'Logged In' : 'Not Logged In'}
-              </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="username"
-                  value={loginForm.username}
-                  onChange={(e) => setLoginForm(prev => ({ ...prev, username: e.target.value }))}
+                  id="email"
+                  type="email"
+                  value={loginForm.email}
+                  onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
                   required
                 />
               </div>
@@ -566,7 +725,7 @@ export const Admin = () => {
               <Button type="submit" className="w-full">
                 Login
               </Button>
-              <p className="text-sm text-gray-600 text-center">
+              <p className="text-sm text-muted-foreground text-center">
                 Demo credentials: admin / admin123
               </p>
             </form>
@@ -594,20 +753,19 @@ export const Admin = () => {
       features: formData.features.filter(f => f.trim() !== ''),
       requirements: formData.requirements.filter(r => r.trim() !== ''),
       additionalImages: formData.additionalImages.filter(img => img.trim() !== ''),
-      packageFileUrl: formData.packageFileUrl || undefined,
     };
 
     console.log('Submitting service data:', serviceData); // Log data being sent
 
     if (editingService) {
-      await updateService(editingService.id, serviceData, formData.packageFile || undefined);
+      await updateService(editingService.id, serviceData, formData.file || undefined);
       toast({
         title: "Service updated",
         description: "Service has been updated successfully."
       });
       setEditingService(null);
     } else {
-      await addService(serviceData, formData.packageFile || undefined);
+      await addService(serviceData, formData.file || undefined);
       toast({
         title: "Service added",
         description: "New service has been added successfully."
@@ -616,6 +774,29 @@ export const Admin = () => {
     }
     
     resetForm();
+  };
+
+  const handleBloodTestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const bloodTestData: Omit<BloodTest, '_id'> = { ...bloodTestFormData };
+
+    if (editingBloodTest) {
+      await updateBloodTest(editingBloodTest._id, bloodTestData);
+      toast({
+        title: "Blood test updated",
+        description: "Blood test has been updated successfully."
+      });
+      setEditingBloodTest(null);
+    } else {
+      await addBloodTest(bloodTestData);
+      toast({
+        title: "Blood test added",
+        description: "New blood test has been added successfully."
+      });
+      setIsAddBloodTestDialogOpen(false);
+    }
+    
+    resetBloodTestForm();
   };
 
   const handleEdit = (service: Service) => {
@@ -635,9 +816,23 @@ export const Admin = () => {
       features: service.features || [],
       requirements: service.requirements || [],
       additionalImages: service.additionalImages || [],
-      packageFileUrl: service.packageFileUrl || '',
-      packageFile: null, // Reset file input when editing
+      file: null, // Reset file input when editing
     });
+  };
+
+  const handleBloodTestEdit = (bloodTest: BloodTest) => {
+    setEditingBloodTest(bloodTest);
+    setBloodTestFormData({
+      name: bloodTest.name,
+      price: bloodTest.price,
+      originalPrice: bloodTest.originalPrice,
+      description: bloodTest.description,
+      sampleType: bloodTest.sampleType,
+      fasting: bloodTest.fasting,
+      reportTime: bloodTest.reportTime,
+      category: bloodTest.category,
+    });
+    setIsAddBloodTestDialogOpen(true);
   };
 
   const handleDelete = (id: string) => {
@@ -670,12 +865,13 @@ export const Admin = () => {
   };
 
   return (
-      <div className="container mx-auto px-4 py-8 bg-white min-h-screen">
+      <div className="container mx-auto px-4 py-8 bg-background min-h-screen">
         {/* Debug Info */}
-        <div className="bg-yellow-100 p-4 mb-4 rounded-lg">
-          <p className="text-sm">
+        <div className="bg-yellow-100 dark:bg-yellow-900 p-4 mb-4 rounded-lg">
+          <p className="text-sm text-yellow-800 dark:text-yellow-200">
             <strong>Debug Info:</strong> Login State: {isLoggedIn ? 'Logged In' : 'Not Logged In'} | 
-            Services Count: {services.length} | 
+            Services Count: {services.length} |
+            Blood Tests Count: {bloodTests.length} |
             Contact Info: {contactInfo.phone ? 'Loaded' : 'Not Loaded'}
           </p>
           <Button 
@@ -694,7 +890,7 @@ export const Admin = () => {
         </div>
         
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
+        <h1 className="text-3xl font-bold text-foreground">Admin Panel</h1>
         <Button onClick={logout} variant="outline">
           <LogOut className="w-4 h-4 mr-2" />
           Logout
@@ -703,8 +899,9 @@ export const Admin = () => {
 
       <Tabs defaultValue="services" className="space-y-6">
           <div className="overflow-x-auto pb-2">
-            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 bg-gray-100">
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-9 bg-muted">
               <TabsTrigger value="services">Services</TabsTrigger>
+              <TabsTrigger value="blood-tests">Blood Tests</TabsTrigger>
               <TabsTrigger value="contact">Contact Info</TabsTrigger>
               <TabsTrigger value="menu">Menu</TabsTrigger>
               <TabsTrigger value="backgrounds">Backgrounds</TabsTrigger>
@@ -713,6 +910,7 @@ export const Admin = () => {
               <TabsTrigger value="settings">Settings</TabsTrigger>
               <TabsTrigger value="global-settings">Global</TabsTrigger>
               <TabsTrigger value="consultations">Consultations</TabsTrigger>
+              <TabsTrigger value="referrals">Referrals</TabsTrigger>
             </TabsList>
           </div>
 
@@ -780,7 +978,7 @@ export const Admin = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
                     {service.description}
                   </p>
                   <div className="flex justify-between items-center text-sm">
@@ -797,6 +995,76 @@ export const Admin = () => {
                       />
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="blood-tests" className="space-y-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <h2 className="text-2xl font-bold">Blood Test Management</h2>
+            <Dialog open={isAddBloodTestDialogOpen} onOpenChange={setIsAddBloodTestDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New Blood Test
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>{editingBloodTest ? 'Edit Blood Test' : 'Add New Blood Test'}</DialogTitle>
+                </DialogHeader>
+                <BloodTestForm
+                  formData={bloodTestFormData}
+                  setFormData={setBloodTestFormData}
+                  handleSubmit={handleBloodTestSubmit}
+                  editingBloodTest={editingBloodTest}
+                  setEditingBloodTest={setEditingBloodTest}
+                  setIsAddBloodTestDialogOpen={setIsAddBloodTestDialogOpen}
+                  resetForm={resetBloodTestForm}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {bloodTests.map((test) => (
+              <Card key={test._id} className="relative flex flex-col">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-lg">{test.name}</CardTitle>
+                      <Badge variant="outline" className="mt-1">
+                        {test.category}
+                      </Badge>
+                    </div>
+                    <div className="flex space-x-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleBloodTestEdit(test)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => deleteBloodTest(test._id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                    {test.description}
+                  </p>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="font-bold text-medical-blue">{test.price}</span>
+                    <span>{test.reportTime}</span>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -1080,7 +1348,7 @@ export const Admin = () => {
                           onChange={(e) => updateBackgroundImage(image.id, { order: parseInt(e.target.value) || 1 })}
                         />
                       </div>
-                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
+                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted">
                         <img
                           src={image.url}
                           alt={image.alt}
@@ -1203,7 +1471,7 @@ export const Admin = () => {
                           onChange={(e) => updateSlider(image._id, { order: parseInt(e.target.value) || 1 })}
                         />
                       </div>
-                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
+                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted">
                         <img
                           src={image.imageUrl}
                           alt={image.altText}
@@ -1878,12 +2146,12 @@ export const Admin = () => {
             </CardHeader>
             <CardContent>
               {consultationSubmissions.length === 0 ? (
-                <div className="text-gray-500 text-center py-8">No consultation submissions yet.</div>
+                <div className="text-muted-foreground text-center py-8">No consultation submissions yet.</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="min-w-full border text-sm">
                     <thead>
-                      <tr className="bg-gray-100">
+                      <tr className="bg-muted">
                         <th className="px-4 py-2 border">Name</th>
                         <th className="px-4 py-2 border">Email</th>
                         <th className="px-4 py-2 border">Address</th>
@@ -1910,7 +2178,7 @@ export const Admin = () => {
                                 ))}
                               </ul>
                             ) : (
-                              <span className="text-gray-400">No files</span>
+                              <span className="text-muted-foreground">No files</span>
                             )}
                           </td>
                           <td className="px-4 py-2 border">{new Date(sub.submittedAt).toLocaleString()}</td>
@@ -1918,6 +2186,65 @@ export const Admin = () => {
                             <Button size="sm" variant="destructive" onClick={() => deleteConsultationSubmission(sub.id)}>
                               <Trash2 className="w-4 h-4" />
                             </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Referrals Tab */}
+        <TabsContent value="referrals" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Referral Submissions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {referrals.length === 0 ? (
+                <div className="text-muted-foreground text-center py-8">No referral submissions yet.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full border text-sm">
+                    <thead>
+                      <tr className="bg-muted">
+                        <th className="px-4 py-2 border">Referrer Email</th>
+                        <th className="px-4 py-2 border">Referrer Phone</th>
+                        <th className="px-4 py-2 border">Friend Email</th>
+                        <th className="px-4 py-2 border">Friend Phone</th>
+                        <th className="px-4 py-2 border">Status</th>
+                        <th className="px-4 py-2 border">Referral Code</th>
+                        <th className="px-4 py-2 border">Submitted At</th>
+                        <th className="px-4 py-2 border">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {referrals.map((referral) => (
+                        <tr key={referral._id}>
+                          <td className="px-4 py-2 border">{referral.referrerEmail}</td>
+                          <td className="px-4 py-2 border">{referral.referrerPhone}</td>
+                          <td className="px-4 py-2 border">{referral.friendEmail}</td>
+                          <td className="px-4 py-2 border">{referral.friendPhone}</td>
+                          <td className="px-4 py-2 border">
+                            <Badge variant={referral.status === 'rewarded' ? 'default' : 'secondary'}>
+                              {referral.status}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-2 border">{referral.referralCode}</td>
+                          <td className="px-4 py-2 border">{new Date(referral.createdAt).toLocaleString()}</td>
+                          <td className="px-4 py-2 border">
+                            <select
+                              value={referral.status}
+                              onChange={(e) => handleUpdateReferralStatus(referral._id, e.target.value)}
+                              className="p-1 border rounded-md"
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="joined">Joined</option>
+                              <option value="rewarded">Rewarded</option>
+                            </select>
                           </td>
                         </tr>
                       ))}

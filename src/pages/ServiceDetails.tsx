@@ -4,7 +4,7 @@ import { useServices } from '@/contexts/ServiceContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Clock, Users, Star, Check, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Star, Check, AlertCircle, Download } from 'lucide-react';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -277,7 +277,21 @@ export const ServiceDetails = () => {
                 <Button variant="outline" className="w-full">
                   Contact for Questions
                 </Button>
-                
+
+                {/* {service.packageFileUrl && (
+                  <a
+                    href={service.packageFileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                  >
+                    <Button className="w-full" size="lg">
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Package
+                    </Button>
+                  </a>
+                )}
+                 */}
                 <div className="text-sm text-gray-500 text-center">
                   Duration: {service.duration}
                 </div>

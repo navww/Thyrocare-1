@@ -76,9 +76,9 @@ export const ServiceCard = ({
       
       <CardHeader className="p-4 pb-2 md:p-6 md:pb-4">
         {/* Image */}
-        <div className="aspect-[4/3] bg-gradient-to-br from-medical-blue-light to-white rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+        <div className="bg-gradient-to-br from-medical-blue-light to-white rounded-lg mb-4 flex items-center justify-center overflow-hidden">
           {image ? (
-            <img src={image} alt={imageAlt} className="w-full h-full object-contain" />
+            <img src={image} alt={imageAlt} className="w-full object-contain" />
           ) : (
             <div className="text-center p-4">
               <div className="w-16 h-16 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-2">
@@ -90,14 +90,14 @@ export const ServiceCard = ({
         
         <div className="space-y-2">
           <Badge variant="outline" className="text-medical-blue border-medical-blue">{category}</Badge>
-          <h3 className="text-lg md:text-xl font-bold text-gray-900 group-hover:text-medical-blue transition-colors h-14">
+          <h3 className="text-lg md:text-xl font-bold text-gray-900 group-hover:text-medical-blue transition-colors">
             {title}
           </h3>
         </div>
       </CardHeader>
 
       <CardContent className="p-4 pt-2 md:p-6 md:pt-2 space-y-4">
-        <p className="text-gray-600 text-sm leading-relaxed h-20">
+        <p className="text-gray-600 text-sm leading-relaxed">
           {description.length > 110 ? (
             <>
               {description.slice(0, 110)}...

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useAuth } from './AuthContext'; // Import useAuth to access the token
 
-interface BackgroundImage {
+export interface BackgroundImage {
   id: string;
   url: string;
   alt: string;
@@ -19,6 +20,7 @@ const BackgroundContext = createContext<BackgroundContextType | undefined>(undef
 
 export const BackgroundProvider = ({ children }: { children: ReactNode }) => {
   const [backgroundImages, setBackgroundImages] = useState<BackgroundImage[]>([]);
+  const { token } = useAuth(); // Get the auth token
 
   useEffect(() => {
     const fetchBackgroundImages = async () => {
@@ -28,8 +30,8 @@ export const BackgroundProvider = ({ children }: { children: ReactNode }) => {
         if (response.ok) {
           const formattedImages = data.map((image: any, index: number) => ({
             id: image._id,
-            url: image.imageUrl,
-            alt: image.altText || `Background Image ${index + 1}`,
+            url: image.imageUrl || image.url, // Fallback for old data
+            alt: image.altText || image.alt || `Background Image ${index + 1}`, // More robust fallback
             order: image.order || index + 1,
           }));
           setBackgroundImages(formattedImages);
@@ -44,28 +46,68 @@ export const BackgroundProvider = ({ children }: { children: ReactNode }) => {
     fetchBackgroundImages();
   }, []);
 
-  const addBackgroundImage = (image: Omit<BackgroundImage, 'id'>) => {
-    const newImage: BackgroundImage = {
-      ...image,
-      id: Date.now().toString(),
-    };
-    setBackgroundImages(prev => [...prev, newImage].sort((a, b) => a.order - b.order));
+  const addBackgroundImage = async (image: Omit<BackgroundImage, 'id'>) => {
+    try {
+      const payload = {
+        url: image.url,
+        alt: image.alt,
+        order: image.order,
+      };
+      const response = await fetch('https://thybackend.onrender.com/api/background-images', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Add the token
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        const newImage = {
+          id: data._id,
+          url: data.url,
+          alt: data.alt,
+          order: data.order,
+        };
+        setBackgroundImages(prev => [...prev, newImage].sort((a, b) => a.order - b.order));
+      } else {
+        console.error('Failed to add background image:', data.message);
+      }
+    } catch (error) {
+      console.error('Error adding background image:', error);
+    }
   };
 
   const updateBackgroundImage = async (id: string, updates: Partial<BackgroundImage>) => {
     try {
+      const payload: { [key: string]: any } = {};
+      if (updates.url !== undefined) payload.url = updates.url;
+      if (updates.alt !== undefined) payload.alt = updates.alt;
+      if (updates.order !== undefined) payload.order = updates.order;
+
+      if (Object.keys(payload).length === 0) {
+        return;
+      }
+
       const response = await fetch(`https://thybackend.onrender.com/api/background-images/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
       if (response.ok) {
+        const updatedImage = {
+          id: data._id,
+          url: data.url,
+          alt: data.alt,
+          order: data.order,
+        };
         setBackgroundImages(prev =>
           prev.map(image =>
-            image.id === id ? { ...image, ...data } : image
+            image.id === id ? updatedImage : image
           ).sort((a, b) => a.order - b.order)
         );
       } else {
@@ -80,6 +122,9 @@ export const BackgroundProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await fetch(`https://thybackend.onrender.com/api/background-images/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
       if (response.ok) {
         setBackgroundImages(prev => prev.filter(image => image.id !== id));

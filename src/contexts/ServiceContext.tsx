@@ -82,16 +82,14 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
         if (Object.prototype.hasOwnProperty.call(service, key)) {
           const value = (service as any)[key];
           if (Array.isArray(value)) {
-            value.forEach((item, index) => {
-              formData.append(`${key}[${index}]`, item);
-            });
-          } else {
+            value.forEach(item => formData.append(`${key}[]`, item));
+          } else if (value !== null && value !== undefined) {
             formData.append(key, value);
           }
         }
       }
       if (file) {
-        formData.append('packageFile', file);
+        formData.append('file', file);
       }
       const response = await addServiceAPI(formData);
       const serviceList = response.data.services;
@@ -121,16 +119,14 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
         if (Object.prototype.hasOwnProperty.call(updatedService, key)) {
           const value = (updatedService as any)[key];
           if (Array.isArray(value)) {
-            value.forEach((item, index) => {
-              formData.append(`${key}[${index}]`, item);
-            });
-          } else {
+            value.forEach(item => formData.append(`${key}[]`, item));
+          } else if (value !== null && value !== undefined) {
             formData.append(key, value);
           }
         }
       }
       if (file) {
-        formData.append('packageFile', file);
+        formData.append('file', file);
       }
       await updateServiceAPI(id, formData);
       // Re-fetch all services to ensure data consistency after update
