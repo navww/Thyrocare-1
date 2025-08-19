@@ -92,7 +92,9 @@ export const Footer = () => {
               <div className="flex items-start space-x-2 justify-center md:justify-start">
                 <MapPin className="w-4 h-4 text-medical-blue mt-0.5" />
                 <div>
-                  <p>{contactInfo.address}</p>
+                  {contactInfo.address.map((addr, index) => (
+                    <p key={index}>{addr}</p>
+                  ))}
                 </div>
               </div>
             </div>

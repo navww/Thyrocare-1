@@ -4,7 +4,7 @@ import api from '@/api';
 export interface ContactInfo {
   phone: string;
   email: string;
-  address: string;
+  address: string[];
   businessHours: string;
 }
 
@@ -17,8 +17,11 @@ const ContactContext = createContext<ContactContextType | undefined>(undefined);
 
 const initialContactInfo: ContactInfo = {
   phone: "0120-123-456",
-  email: "info@medical-consult.com",
-  address: "123 Medical Center Dr, Healthcare City, HC 12345",
+  email: "aarogyamcentre1@gmail.com",
+  address: [
+    "No1, BNR Building , Chandapura to Anekal Road , Chandapura Bangalore -560099",
+    "pratapgarh uttarpradesh"
+  ],
   businessHours: "Mon-Fri 9:00-18:00"
 };
 

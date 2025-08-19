@@ -22,7 +22,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Offers from "./pages/Offers";
 import BulkBookingDiscount from "./pages/BulkBookingDiscount";
-// ThyrocarePackage route removed
+import ThyrocarePackage from "./pages/ThyrocarePackage";
 import BloodTest from "./pages/BloodTest";
 import Blog from "./pages/Blog";
 import { ServiceDetails } from "./pages/ServiceDetails";
@@ -120,7 +120,7 @@ const AppContent = () => {
           <Route path="/" element={<Index />} />
           <Route path="/offers" element={<Offers />} />
           <Route path="/bulk-booking-discount" element={<BulkBookingDiscount />} />
-          {/* ThyrocarePackage route removed */}
+          <Route path="/thyrocare-package" element={<ThyrocarePackage />} />
           <Route path="/blood-test" element={<BloodTest />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/service/:id" element={<ServiceDetails />} />

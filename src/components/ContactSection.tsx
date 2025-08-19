@@ -201,7 +201,9 @@ export const ContactSection = () => {
                   </div>
                   <div>
                     <p className="font-medium">Location</p>
-                    <p className="text-gray-600">{contactInfo.address}</p>
+                    {contactInfo.address.map((addr, index) => (
+                      <p key={index} className="text-gray-600">{addr}</p>
+                    ))}
                   </div>
                 </div>
               </CardContent>

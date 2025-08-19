@@ -43,26 +43,33 @@ export const HeroSection = () => {
     setSubmitted(true);
   };
   
+  const formattedSliders = sliders.map(slider => ({
+    id: slider._id,
+    url: slider.imageUrl,
+    alt: slider.altText,
+    order: slider.order,
+  }));
+
   return (
-    <section className="relative pt-8 pb-0 md:pt-4 md:pb-8 min-h-[auto] md:min-h-[600px] overflow-hidden">
-      <BackgroundCarousel images={sliders} />
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section className="relative min-h-[500px] md:min-h-[500px] overflow-hidden bg-cover bg-center flex items-center">
+      <BackgroundCarousel images={formattedSliders} />
+      <div className="container mx-auto px-4 relative z-10 h-full flex items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           {/* Left content */}
-          <div className="space-y-6 text-center lg:text-left">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+          <div className="space-y-4 md:space-y-6 text-left">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
               {bannerContent.title}
-              <span className="text-medical-blue block mt-2">{bannerContent.subtitle}</span>
+              <span className="text-white block mt-1 md:mt-2">{bannerContent.subtitle}</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
+            <p className="text-base md:text-lg lg:text-xl text-white leading-relaxed">
               {bannerContent.description}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-start">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="medical" size="lg" className="text-lg px-8 py-6">
+                  <Button variant="medical" size="lg" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-6 w-full sm:w-auto">
                     Book a Package
                   </Button>
                 </DialogTrigger>

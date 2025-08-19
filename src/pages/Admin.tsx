@@ -1109,16 +1109,48 @@ export const Admin = () => {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="address" className="flex items-center gap-2">
+                  <Label className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
-                    Address
+                    Addresses
                   </Label>
-                  <Input
-                    id="address"
-                    value={contactForm.address}
-                    onChange={(e) => setContactForm(prev => ({ ...prev, address: e.target.value }))}
-                    required
-                  />
+                  {contactForm.address.map((addr, index) => (
+                    <div key={index} className="flex items-center space-x-2 mb-2">
+                      <Input
+                        value={addr}
+                        onChange={(e) => {
+                          const newAddresses = [...contactForm.address];
+                          newAddresses[index] = e.target.value;
+                          setContactForm(prev => ({ ...prev, address: newAddresses }));
+                        }}
+                        placeholder="Enter address"
+                      />
+                      {contactForm.address.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const newAddresses = contactForm.address.filter((_, i) => i !== index);
+                            setContactForm(prev => ({ ...prev, address: newAddresses }));
+                          }}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setContactForm(prev => ({ ...prev, address: [...prev.address, ''] }));
+                    }}
+                    className="mt-2"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Address
+                  </Button>
                 </div>
                 <div>
                   <Label htmlFor="businessHours" className="flex items-center gap-2">
