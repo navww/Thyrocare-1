@@ -22,12 +22,12 @@ export const Header = () => {
       {/* Top contact bar */}
       <div className="bg-medical-blue text-white py-1">
         <div className="container mx-auto px-4 flex justify-between items-center text-sm">
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
               <Phone className="w-4 h-4" />
               <span>Phone: {contactInfo.phone}</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="hidden md:flex items-center space-x-2">
               <Clock className="w-4 h-4" />
               <span>Hours: {contactInfo.businessHours}</span>
             </div>

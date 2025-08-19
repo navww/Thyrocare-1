@@ -2,7 +2,7 @@ import React from 'react';
 
 const BulkBookingDiscount: React.FC = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 bg-black bg-opacity-50 text-white rounded-lg">
       <h1 className="text-3xl font-bold mb-4">Bulk Booking Discount – Care for Family, Save More!</h1>
       <p className="mb-4">
         At Thyrocare, we understand that health is not just personal—it’s a family affair. That’s why we’ve introduced our Bulk Booking Discount, designed to make preventive healthcare affordable and accessible for everyone in your family.

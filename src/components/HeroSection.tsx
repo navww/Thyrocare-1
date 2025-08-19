@@ -60,26 +60,26 @@ export const HeroSection = () => {
             </h1>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 mt-6">
               {/* New Packages */}
-              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+              <Link to="/service/68a0aa207890fdafed684ae6" className="bg-white p-4 rounded-lg text-center shadow-lg">
                 <h3 className="font-bold text-lg text-medical-blue">Aarogyam C plus</h3>
                 <p className="text-gray-700">97 Tests</p>
                 <p className="text-xl font-bold text-medical-red mt-2">Rs1799</p>
-              </div>
-              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+              </Link>
+              <Link to="/service/68a1587e9da483109fad216b" className="bg-white p-4 rounded-lg text-center shadow-lg">
                 <h3 className="font-bold text-lg text-medical-blue">Aarogyam D plus</h3>
                 <p className="text-gray-700">114 Tests</p>
                 <p className="text-xl font-bold text-medical-red mt-2">Rs2999</p>
-              </div>
-              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+              </Link>
+              <Link to="/service/68a248cf622f9a0178e44cf3" className="bg-white p-4 rounded-lg text-center shadow-lg">
                 <h3 className="font-bold text-lg text-medical-blue">Aarogyam Stree</h3>
                 <p className="text-gray-700">110 Tests</p>
                 <p className="text-xl font-bold text-medical-red mt-2">Rs2599</p>
-              </div>
-              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+              </Link>
+              <Link to="/service/68a24ad2622f9a0178e44d3d" className="bg-white p-4 rounded-lg text-center shadow-lg">
                 <h3 className="font-bold text-lg text-medical-blue">Aarogyam Purush</h3>
                 <p className="text-gray-700">107 Tests</p>
                 <p className="text-xl font-bold text-medical-red mt-2">Rs2599</p>
-              </div>
+              </Link>
               <div className="bg-white p-4 rounded-lg text-center shadow-lg">
                 <h3 className="font-bold text-lg text-medical-blue">Extensive Full Body Check</h3>
                 <p className="text-gray-700">127 Tests</p>
