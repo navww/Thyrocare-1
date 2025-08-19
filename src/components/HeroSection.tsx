@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Clock, Shield, Users, Stethoscope, Brain } from "lucide-react";
-import { useSiteSettings } from "@/contexts/SiteSettingsContext";
+import { Stethoscope } from "lucide-react";
 import { BackgroundCarousel } from "@/components/BackgroundCarousel";
 import { useContent } from "@/contexts/ContentContext";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
@@ -12,8 +11,7 @@ import { Link } from "react-router-dom";
 import { useSliders } from "@/contexts/SliderContext";
 
 export const HeroSection = () => {
-  const { siteSettings } = useSiteSettings();
-  const { bannerContent, aboutSection, addConsultationSubmission } = useContent();
+  const { aboutSection, addConsultationSubmission } = useContent();
   const { sliders } = useSliders();
   const [form, setForm] = useState({ name: '', email: '', address: '', phone: '', description: '', files: [] as File[] });
   const [submitted, setSubmitted] = useState(false);
@@ -30,7 +28,6 @@ export const HeroSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // For now, just store file names, you can extend to upload to server if needed
     addConsultationSubmission({
       name: form.name,
       email: form.email,
@@ -51,22 +48,51 @@ export const HeroSection = () => {
   }));
 
   return (
-    <section className="relative min-h-[500px] md:min-h-[500px] overflow-hidden bg-cover bg-center flex items-center">
+    <section className="relative min-h-[500px] md:min-h-[500px] overflow-hidden flex items-stretch">
       <BackgroundCarousel images={formattedSliders} />
+      <div className="absolute inset-0 bg-black opacity-50"></div>
       <div className="container mx-auto px-4 relative z-10 h-full flex items-center">
-        <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
+        <div className="grid lg:grid-cols-2 gap-12 items-stretch w-full">
           {/* Left content */}
-          <div className="space-y-4 md:space-y-6 text-left">
+          <div className="space-y-4 md:space-y-6 text-left py-12">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
-              {bannerContent.title}
-              <span className="text-white block mt-1 md:mt-2">{bannerContent.subtitle}</span>
+              Test and you can Trust
             </h1>
-            
-            <p className="text-base md:text-lg lg:text-xl text-white leading-relaxed">
-              {bannerContent.description}
-            </p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 mt-6">
+              {/* New Packages */}
+              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+                <h3 className="font-bold text-lg text-medical-blue">Aarogyam C plus</h3>
+                <p className="text-gray-700">97 Tests</p>
+                <p className="text-xl font-bold text-medical-red mt-2">Rs1799</p>
+              </div>
+              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+                <h3 className="font-bold text-lg text-medical-blue">Aarogyam D plus</h3>
+                <p className="text-gray-700">114 Tests</p>
+                <p className="text-xl font-bold text-medical-red mt-2">Rs2999</p>
+              </div>
+              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+                <h3 className="font-bold text-lg text-medical-blue">Aarogyam Stree</h3>
+                <p className="text-gray-700">110 Tests</p>
+                <p className="text-xl font-bold text-medical-red mt-2">Rs2599</p>
+              </div>
+              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+                <h3 className="font-bold text-lg text-medical-blue">Aarogyam Purush</h3>
+                <p className="text-gray-700">107 Tests</p>
+                <p className="text-xl font-bold text-medical-red mt-2">Rs2599</p>
+              </div>
+              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+                <h3 className="font-bold text-lg text-medical-blue">Extensive Full Body Check</h3>
+                <p className="text-gray-700">127 Tests</p>
+                <p className="text-xl font-bold text-medical-red mt-2">Rs3399</p>
+              </div>
+              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+                <h3 className="font-bold text-lg text-medical-blue">Aarogyam XL Plus</h3>
+                <p className="text-gray-700">163 Tests</p>
+                <p className="text-xl font-bold text-medical-red mt-2">Rs5999</p>
+              </div>
+            </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-start mt-6">
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="medical" size="lg" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-6 w-full sm:w-auto">
@@ -106,27 +132,11 @@ export const HeroSection = () => {
                 </Button>
               </Link>
             </div>
-
-            {/* Features */}
-            <div className="hidden sm:grid grid-cols-2 gap-6 sm:pt-8 pt-0">
-              {aboutSection.features.map((feature, index) => (
-                <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-3">
-                    {index === 0 && <Clock className="w-8 h-8 text-white" />}
-                    {index === 1 && <Shield className="w-8 h-8 text-white" />}
-                    {index === 2 && <Users className="w-8 h-8 text-white" />}
-                    {index === 3 && <Stethoscope className="w-8 h-8 text-white" />}
-                    {index === 4 && <Brain className="w-8 h-8 text-white" />}
-                  </div>
-                  <p className="text-base font-medium">{feature}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Right content - Doctor image placeholder */}
-          <div className="relative hidden lg:block">
-            <Card className="bg-white p-8 shadow-xl">
+          <div className="relative hidden lg:block h-full">
+            <Card className="bg-white p-8 shadow-xl h-full flex flex-col justify-center">
               <div className="aspect-[4/3] bg-gradient-to-br from-medical-blue-light to-medical-red-light rounded-lg flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-20 h-20 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-4">

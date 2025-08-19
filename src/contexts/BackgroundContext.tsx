@@ -28,12 +28,18 @@ export const BackgroundProvider = ({ children }: { children: ReactNode }) => {
         const response = await fetch('https://thybackend.onrender.com/api/background-images');
         const data = await response.json();
         if (response.ok) {
-          const formattedImages = data.map((image: any, index: number) => ({
-            id: image._id,
-            url: image.imageUrl || image.url, // Fallback for old data
-            alt: image.altText || image.alt || `Background Image ${index + 1}`, // More robust fallback
-            order: image.order || index + 1,
-          }));
+          const formattedImages = data.map((image: any, index: number) => {
+            let imageUrl = image.imageUrl || image.url;
+            if (imageUrl && !imageUrl.startsWith('http')) {
+              imageUrl = `https://thybackend.onrender.com/${imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl}`;
+            }
+            return {
+              id: image._id,
+              url: imageUrl,
+              alt: image.altText || image.alt || `Background Image ${index + 1}`,
+              order: image.order || index + 1,
+            };
+          });
           setBackgroundImages(formattedImages);
         } else {
           console.error('Failed to fetch background images:', data.message);
@@ -63,9 +69,13 @@ export const BackgroundProvider = ({ children }: { children: ReactNode }) => {
       });
       const data = await response.json();
       if (response.ok) {
+        let imageUrl = data.url;
+        if (imageUrl && !imageUrl.startsWith('http')) {
+          imageUrl = `https://thybackend.onrender.com/${imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl}`;
+        }
         const newImage = {
           id: data._id,
-          url: data.url,
+          url: imageUrl,
           alt: data.alt,
           order: data.order,
         };
@@ -99,9 +109,13 @@ export const BackgroundProvider = ({ children }: { children: ReactNode }) => {
       });
       const data = await response.json();
       if (response.ok) {
+        let imageUrl = data.url;
+        if (imageUrl && !imageUrl.startsWith('http')) {
+          imageUrl = `https://thybackend.onrender.com/${imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl}`;
+        }
         const updatedImage = {
           id: data._id,
-          url: data.url,
+          url: imageUrl,
           alt: data.alt,
           order: data.order,
         };

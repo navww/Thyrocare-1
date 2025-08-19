@@ -28,6 +28,7 @@ import Blog from "./pages/Blog";
 import { ServiceDetails } from "./pages/ServiceDetails";
 import { AllServices } from "./pages/AllServices";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import Signup from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import { Admin } from "./pages/Admin";
@@ -126,6 +127,7 @@ const AppContent = () => {
           <Route path="/service/:id" element={<ServiceDetails />} />
           <Route path="/all-services" element={<AllServices />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />

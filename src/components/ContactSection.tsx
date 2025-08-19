@@ -51,15 +51,15 @@ export const ContactSection = () => {
   };
   
   return (
-    <section id="contact" className="py-16 bg-white">
+    <section id="contact" className="py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-medical-blue mb-4">
             Contact Us
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-black max-w-3xl mx-auto">
             If you have any questions or concerns, please feel free to contact us.
-            Our professional staff will respond promptly.
+            Our professional staff will respond promptly. <span className="text-black">Test and you can Trust</span> make black not white.
           </p>
         </div>
 

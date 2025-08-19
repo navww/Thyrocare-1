@@ -117,5 +117,10 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    background-image: url('/main.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 }
