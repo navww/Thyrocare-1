@@ -84,7 +84,7 @@ const Offers = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div>
       
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-medical-blue to-medical-light py-16">
@@ -103,7 +103,8 @@ const Offers = () => {
       </section>
 
       {/* Offers Grid */}
-      <section className="py-16">
+      {offers.length > 0 && (
+        <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {offers.map((offer) => (
@@ -235,6 +236,43 @@ const Offers = () => {
               </Card>
             ))}
           </div>
+        </div>
+        </section>
+      )}
+
+      {/* New Content Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-medical-blue mb-4">
+            🌟 Special Health Offers – Take Charge of Your Health Today! 🌟
+          </h2>
+          <p className="text-gray-600 max-w-3xl mx-auto mb-8">
+            Your health is your greatest wealth – and now is the perfect time to invest in it without burning a hole in your pocket! We bring you exclusive, limited-time health check-up offers designed to give you complete peace of mind at the most affordable prices.
+          </p>
+          <p className="text-gray-600 max-w-3xl mx-auto mb-8">
+            Whether you want to track your fitness, detect early signs of health issues, or simply take better care of yourself and your loved ones, our premium health packages are carefully designed to suit every need.
+          </p>
+          <div className="text-left max-w-2xl mx-auto mb-8">
+            <h3 className="text-xl font-bold text-medical-blue mb-4 text-center">✅ Why Choose Our Special Health Offers?</h3>
+            <ul className="space-y-2">
+              <li><strong>Comprehensive Testing</strong> – Covering all essential health parameters in one package.</li>
+              <li><strong>Trusted Accuracy</strong> – Lab-certified, reliable, and precise reports.</li>
+              <li><strong>Affordable Pricing</strong> – Premium health services at never-seen-before discounts.</li>
+              <li><strong>Early Detection Saves Lives</strong> – Identify hidden risks before they become serious.</li>
+              <li><strong>Convenient & Hassle-Free</strong> – Home sample collection available.</li>
+            </ul>
+          </div>
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 max-w-3xl mx-auto mb-8" role="alert">
+            <p className="font-bold">🎁 Limited Time Offers – Don’t Miss Out!</p>
+            <p>These health packages are available for a short period only. Once the offer ends, the prices go back up. So, why wait? Take a small step today and secure a healthier tomorrow.</p>
+          </div>
+          <p className="text-gray-600 max-w-3xl mx-auto mb-8">
+            👉 Act Now! Avail these exclusive health check-up offers for you and your family before the clock runs out. Because nothing is more valuable than your health.
+          </p>
+          <hr className="my-8" />
+          <p className="text-xl font-bold text-medical-blue">
+            ⚡ Book Your Health Package Today – Stay Ahead, Stay Healthy! ⚡
+          </p>
         </div>
       </section>
 
