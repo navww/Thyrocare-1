@@ -80,16 +80,16 @@ export const HeroSection = () => {
                 <p className="text-gray-700">107 Tests</p>
                 <p className="text-xl font-bold text-medical-red mt-2">Rs2599</p>
               </Link>
-              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+              <Link to="/service/68a59e588127fb78a0bbb34f" className="bg-white p-4 rounded-lg text-center shadow-lg">
                 <h3 className="font-bold text-lg text-medical-blue">Extensive Full Body Check</h3>
                 <p className="text-gray-700">127 Tests</p>
                 <p className="text-xl font-bold text-medical-red mt-2">Rs3399</p>
-              </div>
-              <div className="bg-white p-4 rounded-lg text-center shadow-lg">
+              </Link>
+              <Link to="/service/68a59eb38127fb78a0bbb367" className="bg-white p-4 rounded-lg text-center shadow-lg">
                 <h3 className="font-bold text-lg text-medical-blue">Aarogyam XL Plus</h3>
                 <p className="text-gray-700">163 Tests</p>
                 <p className="text-xl font-bold text-medical-red mt-2">Rs5999</p>
-              </div>
+              </Link>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-start mt-6">

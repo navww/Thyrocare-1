@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useContactInfo } from "@/contexts/ContactContext";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { useMenu } from "@/contexts/MenuContext";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -63,7 +62,6 @@ export const Header = () => {
             </div>
             
             <div className="flex items-center space-x-3 ml-10">
-              <ThemeToggle />
               <Button variant="medical-outline" size="sm" asChild>
                 <Link to="/admin">
                   <Settings className="w-4 h-4 mr-2" />
@@ -122,9 +120,6 @@ export const Header = () => {
               <div className="border-t my-2"></div>
 
               <div className="flex flex-col space-y-2 pt-2 px-4">
-                <div className="flex justify-center py-2">
-                  <ThemeToggle />
-                </div>
                 <Button variant="medical-outline" size="sm" className="w-full" asChild>
                   <Link to="/admin">
                     <Settings className="w-4 h-4 mr-2" />
