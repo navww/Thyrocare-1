@@ -15,6 +15,7 @@ import { ContentProvider } from "@/contexts/ContentContext";
 import { GlobalSettingsProvider } from "@/contexts/GlobalSettingsContext";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CartProvider } from "@/contexts/CartContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import Index from "./pages/Index";
@@ -31,6 +32,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Signup from "./pages/SignUp";
 import Profile from "./pages/Profile";
+import Cart from "./pages/Cart";
 import { Admin } from "./pages/Admin";
 import React, { useEffect } from 'react'; // Import useEffect
 
@@ -131,6 +133,7 @@ const AppContent = () => {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -156,9 +159,11 @@ const App = () => (
                             <BlogProvider>
                               <BloodTestProvider>
                                 <SliderProvider>
-                                  <Toaster />
-                                  <Sonner />
-                                  <AppContent /> {/* Render AppContent here */}
+                                  <CartProvider>
+                                    <Toaster />
+                                    <Sonner />
+                                    <AppContent /> {/* Render AppContent here */}
+                                  </CartProvider>
                                 </SliderProvider>
                               </BloodTestProvider>
                             </BlogProvider>

@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, Clock, Menu, X, Settings } from "lucide-react";
+import { Phone, Mail, Clock, Menu, X, Settings, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useContactInfo } from "@/contexts/ContactContext";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { useMenu } from "@/contexts/MenuContext";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { CartContext } from "@/contexts/CartContext";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -15,6 +16,7 @@ export const Header = () => {
   const { menuItems } = useMenu();
   const { isLoggedIn } = useAdmin();
   const { isAuthenticated, logout } = useAuth();
+  const { cart } = useContext(CartContext);
 
   return (
     <header className="bg-background border-b shadow-md relative z-10">
@@ -62,6 +64,14 @@ export const Header = () => {
             </div>
             
             <div className="flex items-center space-x-3 ml-10">
+              <Link to="/cart" className="relative">
+                <ShoppingCart className="w-6 h-6 text-gray-600" />
+                {cart && cart.items.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                    {cart.items.length}
+                  </span>
+                )}
+              </Link>
               <Button variant="medical-outline" size="sm" asChild>
                 <Link to="/admin">
                   <Settings className="w-4 h-4 mr-2" />

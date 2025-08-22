@@ -7,21 +7,6 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
 export const getServices = () => api.get('/service');
 export const addServiceAPI = (serviceData: FormData) => api.post('/service', serviceData);
 export const updateServiceAPI = (id: string, serviceData: FormData) => api.put(`/service/${id}`, serviceData);

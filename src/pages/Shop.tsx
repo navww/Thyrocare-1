@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, ShoppingCart, Star, Filter, Heart, Truck } from "lucide-react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { CartContext } from "@/contexts/CartContext";
 
 const Shop = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [cartCount, setCartCount] = useState(0);
+  const { addToCart: addToCartContext, cart } = useContext(CartContext);
 
   const products = [
     {
@@ -152,8 +153,16 @@ const Shop = () => {
   const popularProducts = products.filter(product => product.popular);
 
   const addToCart = (productId: number) => {
-    setCartCount(cartCount + 1);
-    // Add cart logic here
+    const productToAdd = products.find(p => p.id === productId);
+    if (productToAdd) {
+      const cartItem = {
+        itemId: String(productToAdd.id),
+        name: productToAdd.name,
+        price: parseFloat(productToAdd.price.replace('$', '')),
+        quantity: 1,
+      };
+      addToCartContext(cartItem);
+    }
   };
 
   return (
@@ -204,7 +213,7 @@ const Shop = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <ShoppingCart className="w-5 h-5 text-medical-blue" />
-                <span className="text-medical-blue font-semibold">{cartCount} items</span>
+                <span className="text-medical-blue font-semibold">{cart.items.length} items</span>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import api from "../api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,22 +20,13 @@ const Login = () => {
     setLoading(true);
     setError("");
 
-    // NOTE: In a real app, you'd call an API to verify credentials.
-    // For this example, we'll simulate a successful login.
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // For demonstration, any login is considered successful.
-      // You would replace this with actual validation logic.
-      if (email && password) {
-        login({ name: "User", email });
-        navigate("/profile");
-      } else {
-        setError("Login failed. Please check your credentials.");
-      }
+      const response = await api.post('/user/login', { email, password });
+      const { token, user } = response.data;
+      login(user, token);
+      navigate("/profile");
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      setError("Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
