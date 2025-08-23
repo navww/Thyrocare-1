@@ -152,6 +152,12 @@ const BloodTest = () => {
                     <p>Total</p>
                     <p>Rs.{cart.totalAmount}</p>
                   </div>
+                  <Button
+                    className="w-full mt-4"
+                    onClick={() => navigate("/cart")}
+                  >
+                    Book Now
+                  </Button>
                 </div>
               ) : (
                 <p>Cart Is Empty !!</p>
